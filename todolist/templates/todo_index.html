@@ -1,0 +1,144 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{% static 'lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <title>DJANGO | Login</title>
+</head>
+
+<body>
+    
+    <div class="main-content">
+        <div class="nav nav-bar d-flex flex-wrap align-items-start justify-content-md-end">
+            {% if user.is_authenticated %}
+                <p class="text-muted mb-0">Wecome {{user.username}}</p>
+            {% endif %}
+            <form action="{% url 'login:api_logout' %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-light w-30 m-2" type="submit">logout</button> 
+            </form>
+        </div>
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row full-width">
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h5 class="card-title">TodoList
+                                        </div>
+                                    </div><!-- end col -->
+                                    <div class="d-flex flex-wrap align-items-start justify-content-md-end col-md-6">
+                                        <div>
+                                            <button class="btn btn-light" id="btn_refresh">Refresh</button>
+                                        </div>
+                                    </div>
+                                </div><!-- end row -->
+
+                                <div class="row" id="todolist">
+                                    {% for todo in todos %}
+                                    <div class="col-xl-4 col-sm-6">
+                                        <div class="card border shadow-none">
+                                            <div class="d-flex flex-wrap align-items-start  justify-content-md-end">
+                                                <button class="btn btn-light w-30 m-2"
+                                                    id="delete-{{ todo.id }}">DEL</button>
+                                                <input type="checkbox" class="form-check-input m-2"
+                                                    id="completed-{{ todo.id }}">
+                                            </div>
+                                            <div class="card-body p-4">
+                                                <div class="d-flex align-items-start">
+                                                    <div
+                                                        class="flex-shrink-0 avatar rounded-circle justify-content-md-end me-3">
+                                                    </div>
+                                                    <div class="flex-grow-1 overflow-hidden">
+                                                        <h5 class="font-size-15 mb-1 text-truncate"><button class="btn btn-link btn-lg text-dark ps-0">{{todo.title}}</button></h5>
+                                                        <p class="text-muted mb-0">{{todo.content}}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- end card body -->
+                                        </div><!-- end card -->
+                                    </div>
+                                    {% endfor %}
+                                </div><!-- end row -->
+                            </div><!-- end card body -->
+                        </div><!-- end card -->
+                    </div><!-- end col -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h5 class="card-title">Add Item
+                                        </div>
+                                    </div><!-- end col -->
+                                </div><!-- end row -->
+
+                                <div class="row">
+                                    <div class="col-xl-12">
+                                        <div class="card border shadow-none">
+                                            <form id="addTodoForm">
+                                                {% csrf_token %}
+                                                <div class="form-floating form-floating-custom mb-3">
+                                                    <input type="text" class="form-control" id="input-title"
+                                                        name="title" placeholder="Enter Title">
+                                                    <label for="input-title">Title</label>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <textarea type="text" class="form-control form-control-lg" rows="5"
+                                                        id="input-content" name="content"
+                                                        placeholder="Enter Content"></textarea>
+                                                </div>
+
+                                                <div class="mt-3">
+                                                    <button class="btn btn-info w-100" type="submit">Add</button>
+                                                </div>
+                                            </form><!-- end form -->
+                                        </div><!-- end card -->
+                                    </div>
+                                </div><!-- end row -->
+                            </div><!-- end card body -->
+                        </div><!-- end card -->
+                    </div><!-- end col -->
+                </div><!-- end row -->
+            </div> <!-- container-fluid -->
+        </div>
+        <!-- End Page-content -->
+    </div>
+    <!-- end main content-->
+    <script src="{% static 'main.js' %}"></script>
+    <script>
+        (function () {
+            const todoUrl = "{% url 'todolist:todos' %}";
+
+            const addTodoForm = document.getElementById("addTodoForm");
+            addTodoForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const formData = {
+                    title: addTodoForm.elements["input-title"].value,
+                    content: addTodoForm.elements["input-content"].value
+                }
+                addTodo(todoUrl, formData);
+                addTodoForm.reset();
+            });
+
+            const refreshButton = document.getElementById("btn_refresh");
+            refreshButton.addEventListener("click", () => {
+                getAllTodos(todoUrl);
+            });
+
+            setDeleteAction();
+
+            setCompleteAction();
+        })();;
+    </script>
+</body>
+
+</html>

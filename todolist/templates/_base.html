@@ -1,0 +1,24 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="{% static 'lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <title>Django Ajax Examples</title>
+    <link href="{% static 'main.css' %}" rel="stylesheet">
+
+  </head>
+  <body>
+    <div class="container">
+      {% block content %}
+      {% endblock content %}
+    </div>
+
+    <script src="{% static 'lib/jquery/jquery.min.js' %}"></script>
+    {% block javascript %}{% endblock %}
+    <script src="{% static 'main.js' %}"></script>
+  </body>
+</html>
+
